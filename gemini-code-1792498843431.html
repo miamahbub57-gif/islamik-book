@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamik Book - ইসলামিক বুক</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Arial, sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #059669; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-[#f0f2f5] text-gray-800 pb-16">
+
+    <!-- 🔒 MANDATORY SECURITY GATEWAY -->
+    <div id="security-gate-modal" class="fixed inset-0 bg-emerald-950/80 backdrop-blur-md flex justify-center items-center z-[100] p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 relative">
+            <div class="text-center mb-6 select-none">
+                <h1 onclick="handleBrandClick()" class="text-3xl font-black text-emerald-600 cursor-pointer active:scale-95 transition inline-block">
+                    <i class="fa-solid fa-book-quran mr-1"></i> Islamik Book
+                </h1>
+                <p class="text-xs text-gray-500 mt-1">অ্যাপে প্রবেশ করতে প্রথমে সাইন ইন বা রেজিস্ট্রেশন করুন</p>
+            </div>
+
+            <!-- Auth Mode Switcher Tabs -->
+            <div class="flex border-b border-gray-200 mb-6">
+                <button type="button" onclick="switchGateTab('signin')" id="gate-tab-signin" class="flex-1 pb-3 font-bold text-center border-b-2 border-emerald-600 text-emerald-600">সাইন ইন (Sign In)</button>
+                <button type="button" onclick="switchGateTab('signup')" id="gate-tab-signup" class="flex-1 pb-3 font-bold text-center text-gray-400">রেজিস্ট্রেশন (Register)</button>
+            </div>
+
+            <!-- Mandatory Sign In Form -->
+            <form id="gate-signin-form" onsubmit="handleGateSignIn(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-700 block mb-1">ইমেইল বা মোবাইল</label>
+                    <input type="text" id="gate-login-email" placeholder="example@mail.com" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-700 block mb-1">পাসওয়ার্ড</label>
+                    <input type="password" id="gate-login-pass" placeholder="******" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-md transition">সাইন ইন করুন</button>
+            </form>
+
+            <!-- Mandatory Sign Up Form -->
+            <form id="gate-signup-form" onsubmit="handleGateRegistration(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="text-xs font-bold text-gray-700 block mb-1">আপনার পূর্ণ নাম</label>
+                    <input type="text" id="gate-reg-name" placeholder="যেমন: আব্দুল্লাহ" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-700 block mb-1">ইমেইল বা মোবাইল</label>
+                    <input type="text" id="gate-reg-email" placeholder="example@mail.com" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-700 block mb-1">পাসওয়ার্ড</label>
+                    <input type="password" id="gate-reg-pass" placeholder="******" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-md transition">রেজিস্ট্রেশন করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION WORKSPACE -->
+    <div id="main-app-content" class="hidden">
+        
+        <!-- Top Navigation Header -->
+        <header class="bg-white shadow-md sticky top-0 z-50 flex items-center justify-between px-4 py-2 h-16">
+            <!-- Secret Admin Trigger: 10 Clicks on Title -->
+            <div class="flex items-center space-x-3 select-none">
+                <h1 id="brand-title" class="text-2xl font-black text-emerald-600 tracking-tight flex items-center cursor-pointer active:scale-95 transition" onclick="handleBrandClick()">
+                    <i class="fa-solid fa-book-quran mr-2 text-3xl"></i> Islamik Book
+                </h1>
+            </div>
+
+            <!-- Top Navigation Links -->
+            <div class="hidden md:flex items-center space-x-4 h-full">
+                <button onclick="showTab('home')" id="nav-home" class="px-5 h-full border-b-4 border-emerald-600 text-emerald-600 font-bold"><i class="fa-solid fa-house mr-1"></i> ফিড</button>
+                <button onclick="showTab('videos')" id="nav-videos" class="px-5 h-full border-b-4 border-transparent text-gray-600 hover:text-emerald-600 font-bold"><i class="fa-solid fa-video mr-1"></i> ভিডিও</button>
+                <button onclick="showTab('friends')" id="nav-friends" class="px-5 h-full border-b-4 border-transparent text-gray-600 hover:text-emerald-600 font-bold"><i class="fa-solid fa-user-plus mr-1"></i> রিকোয়েস্ট</button>
+                <button onclick="showTab('profile')" id="nav-profile" class="px-5 h-full border-b-4 border-transparent text-gray-600 hover:text-emerald-600 font-bold"><i class="fa-solid fa-user mr-1"></i> প্রোফাইল</button>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleChatModal()" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 w-10 h-10 rounded-full flex items-center justify-center relative shadow-sm">
+                    <i class="fa-solid fa-comment-dots text-lg"></i>
+                </button>
+                <div id="auth-btn-container"></div>
+            </div>
+        </header>
+
+        <!-- Main Content Layout Grid -->
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 px-4 pt-4">
+            
+            <!-- Left Sidebar Navigation -->
+            <div class="hidden md:block md:col-span-1 space-y-2">
+                <div onclick="showTab('home')" class="flex items-center space-x-3 p-3 bg-white rounded-xl cursor-pointer shadow-sm border border-gray-100">
+                    <i class="fa-solid fa-house text-emerald-600 text-xl w-6"></i>
+                    <span class="font-bold text-gray-700">হোম ফিড</span>
+                </div>
+                <div onclick="showTab('videos')" class="flex items-center space-x-3 p-3 hover:bg-white rounded-xl cursor-pointer text-gray-600">
+                    <i class="fa-solid fa-video text-rose-600 text-xl w-6"></i>
+                    <span class="font-bold">ভিডিও ফিড</span>
+                </div>
+                <div onclick="showTab('friends')" class="flex items-center space-x-3 p-3 hover:bg-white rounded-xl cursor-pointer text-gray-600">
+                    <i class="fa-solid fa-user-plus text-blue-600 text-xl w-6"></i>
+                    <span class="font-bold">ফ্রেন্ড রিকোয়েস্ট</span>
+                </div>
+                <div onclick="showTab('profile')" class="flex items-center space-x-3 p-3 hover:bg-white rounded-xl cursor-pointer text-gray-600">
+                    <i class="fa-solid fa-user text-emerald-600 text-xl w-6"></i>
+                    <span class="font-bold">আমার প্রোফাইল</span>
+                </div>
+            </div>
+
+            <!-- Center Feed Display -->
+            <div class="col-span-1 md:col-span-2 space-y-4">
+                
+                <!-- Home Feed Tab -->
+                <div id="tab-home" class="space-y-4">
+                    <div class="bg-white rounded-2xl shadow-md p-4 border border-gray-100">
+                        <div class="flex space-x-3 pb-3 border-b border-gray-100">
+                            <img id="creator-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
+                            <textarea id="post-text-input" placeholder="আপনার মনে কি ইসলামিক নতুন কিছু আছে?" class="bg-[#f0f2f5] hover:bg-gray-100 focus:bg-white focus:ring-2 focus:ring-emerald-500 transition rounded-xl p-3 w-full outline-none resize-none text-sm h-14"></textarea>
+                        </div>
+
+                        <input type="file" id="image-file-input" accept="image/*" class="hidden" onchange="handleFileSelect(event, 'image')">
+                        <input type="file" id="video-file-input" accept="video/*" class="hidden" onchange="handleFileSelect(event, 'video')">
+
+                        <div id="file-preview-container" class="hidden relative mt-3 rounded-xl overflow-hidden bg-black p-2 border border-emerald-500">
+                            <button onclick="clearSelectedFile()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg z-10"><i class="fa-solid fa-xmark"></i></button>
+                            <div id="preview-content" class="flex justify-center items-center max-h-72"></div>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-3 flex-wrap gap-2">
+                            <div class="flex space-x-2">
+                                <button onclick="document.getElementById('image-file-input').click()" class="flex items-center space-x-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition">
+                                    <i class="fa-solid fa-image text-emerald-600 text-lg"></i> <span>ছবি</span>
+                                </button>
+                                <button onclick="document.getElementById('video-file-input').click()" class="flex items-center space-x-2 bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition">
+                                    <i class="fa-solid fa-video text-rose-600 text-lg"></i> <span>ভিডিও</span>
+                                </button>
+                            </div>
+                            <button onclick="createPost()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-md transition">পোস্ট করুন</button>
+                        </div>
+                    </div>
+
+                    <div id="posts-container" class="space-y-4"></div>
+                </div>
+
+                <!-- Videos Feed Tab -->
+                <div id="tab-videos" class="hidden space-y-4">
+                    <h2 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-video text-rose-600 mr-2"></i> ইসলামিক ভিডিও ফিড</h2>
+                    <div id="video-posts-container" class="space-y-4"></div>
+                </div>
+
+                <!-- Friends Request Tab -->
+                <div id="tab-friends" class="hidden space-y-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-100">
+                        <h2 class="text-lg font-bold text-gray-800 mb-3"><i class="fa-solid fa-user-plus text-blue-600 mr-2"></i> ফ্রেন্ড রিকোয়েস্টসমূহ</h2>
+                        <div id="friend-requests-list" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="tab-profile" class="hidden space-y-4">
+                    <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
+                        <div class="h-36 bg-gradient-to-r from-emerald-600 to-teal-800 relative"></div>
+                        <div class="px-6 pb-6 relative">
+                            <div class="flex flex-col sm:flex-row items-center sm:items-end justify-between -mt-16 mb-4">
+                                <img id="profile-user-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg bg-white">
+                                <button onclick="openEditProfileModal()" class="mt-3 sm:mt-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm border border-emerald-200 transition">
+                                    <i class="fa-solid fa-pen mr-1"></i> প্রোফাইল এডিট
+                                </button>
+                            </div>
+                            <h2 id="profile-user-name" class="text-2xl font-black text-gray-800 text-center sm:text-left">ইউজার</h2>
+                            <p id="profile-user-bio" class="text-sm text-gray-600 text-center sm:text-left mt-1 italic">"আল্লাহকে ভয় করো, যেখানেই তুমি থাকো।"</p>
+                            <p id="profile-user-location" class="text-xs text-gray-500 text-center sm:text-left mt-1"><i class="fa-solid fa-location-dot mr-1 text-emerald-600"></i> <span id="loc-text">ঢাকা, বাংলাদেশ</span></p>
+
+                            <div class="flex justify-around sm:justify-start sm:space-x-8 border-t border-b border-gray-100 py-3 mt-4 text-center">
+                                <div><span id="stat-posts-count" class="font-black text-lg text-emerald-600 block">0</span><span class="text-xs text-gray-500 font-medium">পোস্ট</span></div>
+                                <div><span id="stat-friends-count" class="font-black text-lg text-emerald-600 block">০</span><span class="text-xs text-gray-500 font-medium">ফ্রেন্ডস</span></div>
+                                <div><span id="stat-followers-count" class="font-black text-lg text-emerald-600 block">০</span><span class="text-xs text-gray-500 font-medium">ফলোয়ার্স</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex border-b border-gray-200 bg-white rounded-xl shadow-sm px-2">
+                        <button onclick="showProfileSubTab('all')" id="prof-sub-all" class="flex-1 py-2.5 font-bold text-xs sm:text-sm text-emerald-600 border-b-2 border-emerald-600">সব পোস্ট</button>
+                        <button onclick="showProfileSubTab('images')" id="prof-sub-images" class="flex-1 py-2.5 font-bold text-xs sm:text-sm text-gray-500">ছবিসমূহ</button>
+                        <button onclick="showProfileSubTab('videos')" id="prof-sub-videos" class="flex-1 py-2.5 font-bold text-xs sm:text-sm text-gray-500">ভিডিওসমূহ</button>
+                    </div>
+
+                    <div id="profile-posts-container" class="space-y-4"></div>
+                </div>
+
+                <!-- Secret Admin Panel Section -->
+                <div id="tab-admin" class="hidden space-y-4">
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-rose-200">
+                        <div class="flex justify-between items-center border-b pb-3 mb-4">
+                            <h2 class="text-xl font-black text-rose-600 flex items-center"><i class="fa-solid fa-user-shield mr-2"></i> গোপন অ্যাডমিন প্যানেল</h2>
+                            <button onclick="showTab('home')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3 py-1 rounded-lg">প্রস্থান</button>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="font-bold text-gray-700 text-sm mb-2">নিবন্ধিত ইউজার কন্ট্রোল:</h3>
+                                <div id="admin-users-list" class="space-y-2"></div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold text-gray-700 text-sm mb-2">সকল পোস্ট মনিটরিং ও ডিলিট:</h3>
+                                <div id="admin-posts-list" class="space-y-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="hidden md:block md:col-span-1 space-y-4">
+                <div class="bg-white rounded-2xl shadow-md p-4 border border-gray-100 space-y-3">
+                    <h3 class="font-bold text-sm text-gray-700 flex items-center"><i class="fa-solid fa-circle text-green-500 text-xs mr-2"></i> চ্যাট করার বন্ধু</h3>
+                    <div class="space-y-2">
+                        <div onclick="openChat('হাফেজ তৌহিদ', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80')" class="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-xl cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" class="w-9 h-9 rounded-full object-cover">
+                            <div>
+                                <p class="text-sm font-bold">হাফেজ তৌহিদ</p>
+                                <span class="text-xs text-emerald-600">অনলাইন</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white rounded-2xl shadow-md p-4">
+                    <h3 class="font-bold text-sm opacity-90 mb-2"><i class="fa-solid fa-quote-left mr-2"></i> আজকের হাদিস</h3>
+                    <p class="text-sm italic">"নিশ্চয়ই কষ্টের সাথেই স্বস্তি রয়েছে।" (সূরা আল-ইনশিরাহ: ৬)</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Secret Admin Login Modal (10 Clicks Secret Trigger) -->
+    <div id="admin-auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex justify-center items-center z-[200] p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 relative text-center">
+            <button onclick="closeAdminAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <i class="fa-solid fa-key text-4xl text-rose-600 mb-2"></i>
+            <h2 class="text-xl font-black text-gray-800 mb-1">সিক্রেট অ্যাডমিন প্রবেশ</h2>
+            <p class="text-xs text-gray-500 mb-4">অ্যাডমিন ইউজারনেম ও পাসওয়ার্ড দিন</p>
+            <form onsubmit="verifyAdminCredentials(event)" class="space-y-3">
+                <input type="text" id="admin-user-input" placeholder="ইউজার নেম" required class="w-full text-center text-sm font-bold bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 outline-none">
+                <input type="password" id="admin-pass-input" placeholder="পাসওয়ার্ড" required class="w-full text-center text-sm font-bold bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 outline-none">
+                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl shadow-md">লগইন করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex justify-center items-center z-50 p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 relative">
+            <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-xl font-black text-gray-800 mb-4">প্রোফাইল আপডেট</h2>
+            <form onsubmit="handleProfileUpdate(event)" class="space-y-3">
+                <div>
+                    <label class="text-xs font-bold text-gray-700 block mb-1">নাম</label>
+                    <input type="text" id="edit-name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-700 block mb-1">বায়ো</label>
+                    <input type="text" id="edit-bio" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-700 block mb-1">ঠিকানা</label>
+                    <input type="text" id="edit-location" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow-md mt-2">সেভ করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div id="chat-modal" class="fixed bottom-0 right-4 w-80 md:w-96 bg-white rounded-t-2xl shadow-2xl border border-gray-200 hidden flex flex-col h-96 z-50">
+        <div class="bg-emerald-600 text-white px-4 py-3 rounded-t-2xl flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img id="chat-target-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" class="w-7 h-7 rounded-full object-cover">
+                <span id="chat-target-name" class="font-bold text-sm">হাফেজ তৌহিদ</span>
+            </div>
+            <button onclick="toggleChatModal()" class="text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-body" class="flex-1 p-3 overflow-y-auto space-y-2 text-sm bg-gray-50">
+            <div class="bg-white border p-2.5 rounded-2xl max-w-[80%] text-xs">আসসালামু আলাইকুম! কেমন আছেন?</div>
+        </div>
+        <div class="p-2 border-t bg-white flex space-x-2">
+            <input type="text" id="chat-input" placeholder="মেসেজ লিখুন..." onkeypress="if(event.key==='Enter') sendChatMessage()" class="flex-1 bg-gray-100 rounded-xl px-4 py-2 text-sm outline-none">
+            <button onclick="sendChatMessage()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Core -->
+    <script>
+        let clickCount = 0;
+        let clickTimer = null;
+
+        // Secret Admin Trigger: 10 Clicks on Title Anywhere
+        function handleBrandClick() {
+            clickCount++;
+            clearTimeout(clickTimer);
+            if (clickCount >= 10) {
+                clickCount = 0;
+                document.getElementById('admin-auth-modal').classList.remove('hidden');
+            } else {
+                clickTimer = setTimeout(() => { clickCount = 0; }, 3000);
+            }
+        }
+
+        function closeAdminAuthModal() { document.getElementById('admin-auth-modal').classList.add('hidden'); }
+
+        function verifyAdminCredentials(e) {
+            e.preventDefault();
+            const uName = document.getElementById('admin-user-input').value.trim();
+            const pass = document.getElementById('admin-pass-input').value.trim();
+
+            if (uName === "Islamik Book" && pass === "Islamikbook2026") {
+                closeAdminAuthModal();
+                document.getElementById('admin-user-input').value = '';
+                document.getElementById('admin-pass-input').value = '';
+                
+                // Unlock app view for admin
+                document.getElementById('security-gate-modal').classList.add('hidden');
+                document.getElementById('main-app-content').classList.remove('hidden');
+                showTab('admin');
+                renderAdminPanel();
+            } else {
+                alert('ভুল ইউজার নেম বা পাসওয়ার্ড দেওয়া হয়েছে!');
+            }
+        }
+
+        let currentUser = JSON.parse(localStorage.getItem('islamik_user_v9')) || {
+            id: null,
+            name: "",
+            email: "",
+            bio: "আল্লাহকে ভয় করো, যেখানেই তুমি থাকো।",
+            location: "ঢাকা, বাংলাদেশ",
+            avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80",
+            isRegistered: false,
+            isBlocked: false,
+            friendsCount: 0,
+            followersCount: 0
+        };
+
+        let userDatabase = JSON.parse(localStorage.getItem('islamik_users_db_v7')) || [];
+
+        let selectedMediaData = null;
+        let selectedMediaType = null;
+        let currentProfileFilter = 'all';
+
+        let friendRequests = [
+            { id: 1, name: "হাফেজ তৌহিদ", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80", mutual: "৩ জন মিউচুয়াল বন্ধু" }
+        ];
+
+        let posts = JSON.parse(localStorage.getItem('islamik_posts_v16')) || [
+            {
+                id: 1,
+                authorId: 'usr_demo',
+                author: "হাফেজ তানভীর",
+                avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=100&q=80",
+                time: "১০ মিনিট আগে",
+                content: "পবিত্র কুরআন তিলওয়াত শুনুন এবং শেয়ার করুন।",
+                media: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                mediaType: "video",
+                likes: 12,
+                likedBy: [],
+                comments: ["মাশাআল্লাহ!"]
+            }
+        ];
+
+        // Check Login Security Status on Launch
+        function checkAppSecurity() {
+            const gateModal = document.getElementById('security-gate-modal');
+            const mainApp = document.getElementById('main-app-content');
+
+            if (currentUser.isRegistered && currentUser.id) {
+                gateModal.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                renderAuthUI();
+                renderFriendRequests();
+                renderProfileData();
+                renderPosts();
+            } else {
+                gateModal.classList.remove('hidden');
+                mainApp.classList.add('hidden');
+            }
+        }
+
+        function switchGateTab(tab) {
+            const signinBtn = document.getElementById('gate-tab-signin');
+            const signupBtn = document.getElementById('gate-tab-signup');
+            const signinForm = document.getElementById('gate-signin-form');
+            const signupForm = document.getElementById('gate-signup-form');
+
+            if (tab === 'signin') {
+                signinBtn.classList.add('border-emerald-600', 'text-emerald-600');
+                signinBtn.classList.remove('text-gray-400');
+                signupBtn.classList.remove('border-emerald-600', 'text-emerald-600');
+                signupBtn.classList.add('text-gray-400');
+                signinForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            } else {
+                signupBtn.classList.add('border-emerald-600', 'text-emerald-600');
+                signupBtn.classList.remove('text-gray-400');
+                signinBtn.classList.remove('border-emerald-600', 'text-emerald-600');
+                signinBtn.classList.add('text-gray-400');
+                signupForm.classList.remove('hidden');
+                signinForm.classList.add('hidden');
+            }
+        }
+
+        function handleGateRegistration(e) {
+            e.preventDefault();
+            const name = document.getElementById('gate-reg-name').value.trim();
+            const email = document.getElementById('gate-reg-email').value.trim();
+            const pass = document.getElementById('gate-reg-pass').value.trim();
+
+            const existing = userDatabase.find(u => u.email === email);
+            if (existing) {
+                alert('এই ইমেইল দিয়ে ইতোমধ্যে একাউন্ট খোলা আছে! সাইন ইন করুন।');
+                switchGateTab('signin');
+                return;
+            }
+
+            const newUserId = 'usr_' + Date.now();
+            const newUserObj = { id: newUserId, name: name, email: email, pass: pass, isBlocked: false };
+            userDatabase.push(newUserObj);
+
+            currentUser = {
+                id: newUserId,
+                name: name,
+                email: email,
+                bio: "আল্লাহকে ভয় করো, যেখানেই তুমি থাকো।",
+                location: "বাংলাদেশ",
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80",
+                isRegistered: true,
+                isBlocked: false,
+                friendsCount: 0,
+                followersCount: 0
+            };
+
+            updateStore();
+            checkAppSecurity();
+            alert('রেজিস্ট্রেশন সফল হয়েছে! অ্যাপে স্বাগতম।');
+        }
+
+        function handleGateSignIn(e) {
+            e.preventDefault();
+            const email = document.getElementById('gate-login-email').value.trim();
+            const pass = document.getElementById('gate-login-pass').value.trim();
+
+            const foundUser = userDatabase.find(u => u.email === email && u.pass === pass);
+            if (foundUser) {
+                currentUser = {
+                    id: foundUser.id,
+                    name: foundUser.name,
+                    email: foundUser.email,
+                    bio: "আল্লাহকে ভয় করো, যেখানেই তুমি থাকো।",
+                    location: "বাংলাদেশ",
+                    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80",
+                    isRegistered: true,
+                    isBlocked: foundUser.isBlocked || false,
+                    friendsCount: 12,
+                    followersCount: 50
+                };
+                updateStore();
+                checkAppSecurity();
+                alert(`স্বাগতম ${currentUser.name}! অ্যাপে প্রবেশ করেছেন।`);
+            } else {
+                alert('ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে!');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = {
+                id: null,
+                name: "",
+                email: "",
+                bio: "",
+                location: "",
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80",
+                isRegistered: false,
+                isBlocked: false,
+                friendsCount: 0,
+                followersCount: 0
+            };
+            updateStore();
+            checkAppSecurity();
+            alert('লগআউট করা হয়েছে!');
+        }
+
+        function updateStore() {
+            localStorage.setItem('islamik_posts_v16', JSON.stringify(posts));
+            localStorage.setItem('islamik_user_v9', JSON.stringify(currentUser));
+            localStorage.setItem('islamik_users_db_v7', JSON.stringify(userDatabase));
+            renderPosts();
+            renderFriendRequests();
+            renderProfileData();
+            renderAdminPanel();
+        }
+
+        function renderAuthUI() {
+            const container = document.getElementById('auth-btn-container');
+            if (currentUser.isRegistered) {
+                container.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <div onclick="showTab('profile')" class="flex items-center space-x-2 bg-gray-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-gray-200">
+                            <img src="${currentUser.avatar}" class="w-8 h-8 rounded-full object-cover">
+                            <span class="font-bold text-xs sm:text-sm">${currentUser.name}</span>
+                        </div>
+                        <button onclick="handleLogout()" class="text-red-600 hover:bg-red-50 p-2 rounded-full text-xs font-bold" title="লগআউট"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                `;
+            }
+            document.getElementById('creator-avatar').src = currentUser.avatar;
+        }
+
+        function renderProfileData() {
+            document.getElementById('profile-user-avatar').src = currentUser.avatar;
+            document.getElementById('profile-user-name').innerText = currentUser.name;
+            document.getElementById('profile-user-bio').innerText = `"${currentUser.bio}"`;
+            document.getElementById('loc-text').innerText = currentUser.location;
+            document.getElementById('stat-friends-count').innerText = currentUser.friendsCount;
+            document.getElementById('stat-followers-count').innerText = currentUser.followersCount;
+        }
+
+        function renderAdminPanel() {
+            const usersList = document.getElementById('admin-users-list');
+            const postsList = document.getElementById('admin-posts-list');
+
+            usersList.innerHTML = userDatabase.length === 0 ? '<p class="text-xs text-gray-500">কোনো নিবন্ধিত ইউজার নেই।</p>' : '';
+            userDatabase.forEach(u => {
+                usersList.innerHTML += `
+                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border">
+                        <div><p class="font-bold text-sm">${u.name}</p><span class="text-xs text-gray-500">${u.email}</span></div>
+                        <button onclick="toggleBlockUser('${u.id}')" class="${u.isBlocked ? 'bg-emerald-600' : 'bg-amber-600'} text-white text-xs px-3 py-1 rounded-lg font-bold">
+                            ${u.isBlocked ? 'Unblock' : 'Block User'}
+                        </button>
+                    </div>
+                `;
+            });
+
+            postsList.innerHTML = '';
+            posts.forEach(p => {
+                postsList.innerHTML += `
+                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border">
+                        <div class="truncate max-w-[70%]">
+                            <span class="font-bold text-xs text-emerald-600">${p.author}:</span>
+                            <span class="text-xs text-gray-700">${p.content || 'মিডিয়া ফাইল'}</span>
+                        </div>
+                        <button onclick="adminDeletePost(${p.id})" class="bg-rose-600 text-white text-xs px-3 py-1 rounded-lg font-bold">ডিলিট</button>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleBlockUser(usrId) {
+            const u = userDatabase.find(x => x.id === usrId);
+            if (u) {
+                u.isBlocked = !u.isBlocked;
+                if (currentUser.id === u.id) currentUser.isBlocked = u.isBlocked;
+                updateStore();
+            }
+        }
+
+        function adminDeletePost(id) {
+            if (confirm("অ্যাডমিন হিসেবে পোস্টটি মুছে ফেলতে চান?")) {
+                posts = posts.filter(p => p.id !== id);
+                updateStore();
+            }
+        }
+
+        function openEditProfileModal() {
+            document.getElementById('edit-name').value = currentUser.name;
+            document.getElementById('edit-bio').value = currentUser.bio;
+            document.getElementById('edit-location').value = currentUser.location;
+            document.getElementById('edit-profile-modal').classList.remove('hidden');
+        }
+
+        function closeEditProfileModal() { document.getElementById('edit-profile-modal').classList.add('hidden'); }
+
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            currentUser.name = document.getElementById('edit-name').value.trim();
+            currentUser.bio = document.getElementById('edit-bio').value.trim();
+            currentUser.location = document.getElementById('edit-location').value.trim();
+            closeEditProfileModal();
+            renderAuthUI();
+            updateStore();
+        }
+
+        function handleFileSelect(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+            selectedMediaType = type;
+            selectedMediaData = URL.createObjectURL(file);
+            const container = document.getElementById('preview-content');
+            document.getElementById('file-preview-container').classList.remove('hidden');
+            if (type === 'image') {
+                container.innerHTML = `<img src="${selectedMediaData}" class="max-h-64 rounded-lg object-contain">`;
+            } else {
+                container.innerHTML = `<video src="${selectedMediaData}" controls class="max-h-64 rounded-lg w-full"></video>`;
+            }
+        }
+
+        function clearSelectedFile() {
+            selectedMediaData = null;
+            selectedMediaType = null;
+            document.getElementById('image-file-input').value = '';
+            document.getElementById('video-file-input').value = '';
+            document.getElementById('file-preview-container').classList.add('hidden');
+        }
+
+        function createPost() {
+            if (currentUser.isBlocked) {
+                alert('অ্যাডমিন আপনাকে নতুন পোস্ট দেওয়া থেকে ব্লক করে রেখেছে!');
+                return;
+            }
+            const text = document.getElementById('post-text-input').value.trim();
+            if (!text && !selectedMediaData) {
+                alert('দয়া করে কিছু লিখুন অথবা ছবি/ভিডিও বেছে নিন।');
+                return;
+            }
+            const newPost = {
+                id: Date.now(),
+                authorId: currentUser.id,
+                author: currentUser.name,
+                avatar: currentUser.avatar,
+                time: "এইমাত্র",
+                content: text,
+                media: selectedMediaData,
+                mediaType: selectedMediaType,
+                likes: 0,
+                likedBy: [],
+                comments: []
+            };
+            posts.unshift(newPost);
+            document.getElementById('post-text-input').value = '';
+            clearSelectedFile();
+            updateStore();
+        }
+
+        function deletePost(id) {
+            const targetPost = posts.find(p => p.id === id);
+            if (!targetPost) return;
+
+            if (targetPost.authorId !== currentUser.id) {
+                alert('সিকিউরিটি ওয়ার্নিং: আপনি অন্যের পোস্ট ডিলিট বা এডিট করতে পারবেন না!');
+                return;
+            }
+
+            if (confirm("আপনি কি আপনার এই পোস্টটি মুছে ফেলতে চান?")) {
+                posts = posts.filter(p => p.id !== id);
+                updateStore();
+            }
+        }
+
+        function toggleLike(id) {
+            const post = posts.find(p => p.id === id);
+            const idx = post.likedBy.indexOf(currentUser.id);
+            if (idx === -1) { post.likedBy.push(currentUser.id); post.likes++; }
+            else { post.likedBy.splice(idx, 1); post.likes--; }
+            updateStore();
+        }
+
+        function addComment(id) {
+            const txt = prompt("আপনার কমেন্ট লিখুন:");
+            if (txt) {
+                const post = posts.find(p => p.id === id);
+                post.comments.push(`${currentUser.name}: ${txt}`);
+                updateStore();
+            }
+        }
+
+        function renderFriendRequests() {
+            const container = document.getElementById('friend-requests-list');
+            container.innerHTML = friendRequests.length === 0 ? '<p class="text-xs text-gray-500">কোনো রিকোয়েস্ট নেই।</p>' : '';
+            friendRequests.forEach(req => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-3 border rounded-xl bg-gray-50">
+                        <div class="flex items-center space-x-3">
+                            <img src="${req.avatar}" class="w-10 h-10 rounded-full object-cover">
+                            <div><h4 class="font-bold text-sm">${req.name}</h4><span class="text-xs text-gray-400">${req.mutual}</span></div>
+                        </div>
+                        <button onclick="alert('রিকোয়েস্ট গৃহীত হয়েছে!')" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold">Accept</button>
+                    </div>
+                `;
+            });
+        }
+
+        function showProfileSubTab(filter) {
+            currentProfileFilter = filter;
+            ['all', 'images', 'videos'].forEach(f => {
+                const btn = document.getElementById(`prof-sub-${f}`);
+                if (f === filter) {
+                    btn.classList.add('text-emerald-600', 'border-b-2', 'border-emerald-600');
+                    btn.classList.remove('text-gray-500');
+                } else {
+                    btn.classList.remove('text-emerald-600', 'border-b-2', 'border-emerald-600');
+                    btn.classList.add('text-gray-500');
+                }
+            });
+            renderPosts();
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            const videoContainer = document.getElementById('video-posts-container');
+            const profileContainer = document.getElementById('profile-posts-container');
+            
+            container.innerHTML = ''; videoContainer.innerHTML = ''; profileContainer.innerHTML = '';
+
+            let myPostsCount = 0;
+
+            posts.forEach(post => {
+                const isLiked = post.likedBy.includes(currentUser.id);
+                const isMyPost = currentUser.isRegistered && post.authorId === currentUser.id;
+
+                let mediaEl = '';
+                if (post.media) {
+                    mediaEl = post.mediaType === 'video' 
+                        ? `<div class="mt-2 rounded-xl overflow-hidden bg-black flex justify-center"><video src="${post.media}" controls class="w-full max-h-96 object-contain"></video></div>`
+                        : `<img src="${post.media}" class="w-full max-h-96 object-cover rounded-xl mt-2">`;
+                }
+                const commentsHtml = post.comments.map(c => `<div class="bg-gray-100 text-xs p-2 rounded-xl text-gray-700"><b>${c.split(':')[0]}</b>: ${c.split(':')[1]}</div>`).join('');
+
+                const markup = `
+                    <div class="bg-white rounded-2xl shadow-md p-4 border border-gray-100 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-3">
+                                <img src="${post.avatar}" class="w-10 h-10 rounded-full object-cover">
+                                <div><h4 class="font-bold text-sm">${post.author}</h4><span class="text-xs text-gray-400">${post.time}</span></div>
+                            </div>
+                            <!-- SECURITY: Delete button ONLY visible to Post Owner -->
+                            ${isMyPost ? `<button onclick="deletePost(${post.id})" class="text-gray-400 hover:text-red-600 p-1" title="ডিলিট করুন"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                        ${post.content ? `<p class="text-sm text-gray-700">${post.content}</p>` : ''}
+                        ${mediaEl}
+                        <div class="flex justify-between text-xs text-gray-500 pt-2 border-t">
+                            <span>❤️ ${post.likes} লাইক</span><span>💬 ${post.comments.length} কমেন্ট</span>
+                        </div>
+                        <div class="flex justify-between border-t border-b py-1">
+                            <button onclick="toggleLike(${post.id})" class="flex-1 py-1.5 hover:bg-gray-50 rounded-xl text-sm font-bold ${isLiked ? 'text-emerald-600' : 'text-gray-600'}"><i class="fa-solid fa-thumbs-up mr-1"></i> লাইক</button>
+                            <button onclick="addComment(${post.id})" class="flex-1 py-1.5 hover:bg-gray-50 rounded-xl text-sm font-bold text-gray-600"><i class="fa-solid fa-comment mr-1"></i> কমেন্ট</button>
+                        </div>
+                        ${post.comments.length > 0 ? `<div class="space-y-1">${commentsHtml}</div>` : ''}
+                    </div>
+                `;
+
+                container.innerHTML += markup;
+                if (post.mediaType === 'video') videoContainer.innerHTML += markup;
+
+                if (isMyPost) {
+                    myPostsCount++;
+                    if (currentProfileFilter === 'all') profileContainer.innerHTML += markup;
+                    else if (currentProfileFilter === 'images' && post.mediaType === 'image') profileContainer.innerHTML += markup;
+                    else if (currentProfileFilter === 'videos' && post.mediaType === 'video') profileContainer.innerHTML += markup;
+                }
+            });
+
+            document.getElementById('stat-posts-count').innerText = myPostsCount;
+        }
+
+        function showTab(tab) {
+            ['home', 'videos', 'friends', 'profile', 'admin'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+        }
+
+        function toggleChatModal() { document.getElementById('chat-modal').classList.toggle('hidden'); }
+        function openChat(name, avatar) {
+            document.getElementById('chat-target-name').innerText = name;
+            document.getElementById('chat-target-avatar').src = avatar;
+            document.getElementById('chat-modal').classList.remove('hidden');
+        }
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (msg) {
+                document.getElementById('chat-body').innerHTML += `<div class="bg-emerald-600 text-white p-2.5 rounded-2xl max-w-[80%] ml-auto text-xs">${msg}</div>`;
+                input.value = '';
+            }
+        }
+
+        // Initialize App Engine
+        checkAppSecurity();
+    </script>
+</body>
+</html>
